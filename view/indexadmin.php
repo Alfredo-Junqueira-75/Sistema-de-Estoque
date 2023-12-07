@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Login - Sistema de Estoque</title>
+    <title>Admin Login</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
@@ -19,20 +19,22 @@
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on bg_lg"><i class="icon-user"> </i></span><input type="text" placeholder="Username" name="username"/>
+                    <span class="add-on bg_lg"><i class="icon-user"> </i></span><input type="text"
+                                                                                       placeholder="Username" name="username"/>
                 </div>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" placeholder="Password" name="password"/>
+                    <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password"
+                                                                                      placeholder="Password" name="password"/>
                 </div>
             </div>
         </div>
         <div class="form-actions">
             <center>
-                <input type="submit" name="submit1" value="Login" class="btn btn-success"/>
+                <input type="submit" name="submit2" value="Login" class="btn btn-success"/>
             </center>
         </div>
     </form>

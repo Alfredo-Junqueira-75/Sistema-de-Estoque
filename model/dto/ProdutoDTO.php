@@ -2,12 +2,12 @@
 
 class ProdutoDTO{
     private $idProduto;
-    private $nome;
-    private $descricao;
-    private $preco;
-    private $quant_em_estoque;
-    private $cod_de_barra;
-    private $idfornecedor;
+    public $nome;
+    public $descricao;
+    public $preco;
+    public $quant_em_estoque;
+    public $cod_de_barra;
+    public $idfornecedor;
 
     public function __construct(){}
 

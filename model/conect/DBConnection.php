@@ -1,20 +1,14 @@
 <?php
+class DBConnection {
 
-
-class DBConnection
-{
-    private static $connect;
-
-    public function __construct()
-    {
-    }
-    public static function getConnection()
-    {
-        if (!isset(self::$connect)) {
-            self::$connect = new PDO('mysql:host=localhost; dbname=sistema_de_estoque', 'root', '');
-            self::$connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            self::$connect->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_EMPTY_STRING);
+    public static function getConnection(){
+        try{
+            $db = new PDO("mysql:dbname=sistema_de_estoque;host:localhost","root","");
+            return $db;
+        }catch(PDOException $e){
+            
         }
-        return self::$connect;
-    }
+    }    
+
 }
+?>
