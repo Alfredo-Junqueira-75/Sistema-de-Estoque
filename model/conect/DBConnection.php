@@ -1,14 +1,21 @@
 <?php
+
 class DBConnection {
+    private static $db;
 
-    public static function getConnection(){
-        try{
-            $db = new PDO("mysql:dbname=sistema_de_estoque;host:localhost","root","");
-            return $db;
-        }catch(PDOException $e){
-            
+    private function __construct() {}
+
+    public static function getConnection() {
+        if (!self::$db) {
+            try {
+                self::$db = new PDO("mysql:host=localhost;dbname=sistema_de_estoque", "root", "");
+                self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die("Connection failed: " . $e->getMessage());
+            }
         }
-    }    
 
+        return self::$db;
+    }
 }
 ?>

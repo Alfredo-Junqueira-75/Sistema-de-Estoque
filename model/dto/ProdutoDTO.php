@@ -8,6 +8,7 @@ class ProdutoDTO{
     public $quant_em_estoque;
     public $cod_de_barra;
     public $idfornecedor;
+    public $idcategoria;
 
     public function __construct(){}
 
@@ -25,6 +26,8 @@ class ProdutoDTO{
     public function setCodDeBarra($cod_de_barra){$this->cod_de_barra=$cod_de_barra;}
     public function getIdfornecedor(){return $this->idfornecedor;}
     public function setIdfornecedor($idfornecedor){$this->idfornecedor=$idfornecedor;}
+    public function getIdcategoria(){return $this->idcategoria;}
+    public function setIdcategoria($idcategoria){$this->idcategoria=$idcategoria;}
     
 }
 

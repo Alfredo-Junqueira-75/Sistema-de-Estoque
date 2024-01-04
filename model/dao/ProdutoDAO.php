@@ -1,4 +1,6 @@
 <?php 
+include_once(__DIR__ . "/../conect/DBConnection.php");
+include_once(__DIR__ . "/../dto/ProdutoDTO.php");
 
 class ProdutoDAO extends DBConnection
 {
@@ -16,7 +18,7 @@ class ProdutoDAO extends DBConnection
     public function create(ProdutoDTO $produto)
     {
         try {
-            $sql = "INSERT INTO produto(nome, descricao, preco, quant_em_estoque, cod_de_barra, idfornecedor) VALUES (:nome, :descricao, :preco, :quant_em_estoque, :cod_de_barra, :idfornecedor)";
+            $sql = "INSERT INTO produto(nome, descricao, preco, quant_em_estoque, cod_de_barra, idfornecedor, idcategoria) VALUES (:nome, :descricao, :preco, :quant_em_estoque, :cod_de_barra, :idfornecedor, :idcategoria)";
 
             $stm = $this->pdo->prepare($sql);
             $stm->bindValue(':nome', $produto->getNome());
@@ -25,6 +27,7 @@ class ProdutoDAO extends DBConnection
             $stm->bindValue(':quant_em_estoque', $produto->getQuantEmEstoque());
             $stm->bindValue(':cod_de_barra', $produto->getCodDeBarra());
             $stm->bindValue(':idfornecedor', $produto->getIdfornecedor());
+            $stm->bindValue(':idcategoria', $produto->getIdcategoria());
 
             return $stm->execute();
             
@@ -48,13 +51,45 @@ class ProdutoDAO extends DBConnection
         
     }
 
+    public function totalValue(){
+        try{
+            $sql = "SELECT SUM(preco) FROM `produto` WHERE 1";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute();
+            return $stm->fetchColumn();
+        }catch(PDOException $e){
+            echo "Erro na contagem do valor total : " . $e->getMessage();
+        }
+    }
+
+    public function totalProduct(){
+        try{
+            $sql = "SELECT SUM(quant_em_estoque) FROM `produto` WHERE 1";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute();
+            return $stm->fetchColumn();
+        }catch(PDOException $e){
+            echo "Erro na contagem de produto : " . $e->getMessage();
+        }
+    }
+
+    public function subTotalProduct($id){
+        try{
+            $sql = "SELECT SUM(quant_em_estoque) FROM `produto` where idcategoria = :id";
+            $stm = $this->pdo->prepare($sql);
+            $stm->bindParam('id', $id);
+            $stm->execute();
+            return $stm->fetchColumn();
+        }catch(PDOException $e){
+            echo "Erro na contagem de produto : " . $e->getMessage();
+        }
+    }
 
     public function delete(int $id){
         try {
-            $sql = "DELETE * from produto where idProduto = ?";
+            $sql = "DELETE from produto where idproduto = ?";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id]);
-            header("location: SistemaDeEstoque/view/produto.php");
         } catch (PDOException $e) {
             echo "Erro na deleção de dados: " . $e->getMessage();
         }
@@ -62,29 +97,22 @@ class ProdutoDAO extends DBConnection
 
     public function findById(int $id){
         try {
-            $sql = "SELECT * from produto where idProduto = ?";
-            $stm = $this->pdo->prepare($sql);
-            return $stm->execute([$id]);
-        }catch (PDOException $e) {
-            echo "Erro para encontrar o produto". $e->getMessage();
-        }
-    }
-
-    public function get(int $id){
-        try {
-            $sql = "SELECT * from produto where idProduto = ?";
+            $sql = "SELECT * from produto where idproduto = ?";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id]);
-            header("location: SistemaDeEstoque/view/#");
-        
+    
+            $produtoDTO = $stm->fetchObject('ProdutoDTO');
+            return $produtoDTO;
         } catch (PDOException $e) {
-            echo "Erro na busca de dados: " . $e->getMessage();
+            echo "Erro para encontrar o produto: " . $e->getMessage();
         }
     }
+    
 
-    public function update(int $id, ProdutoDTO $produtoDTO){
+
+    public function update($id, ProdutoDTO $produtoDTO){
         try {
-            $sql = "UPDATE produto set nome = :nome, descricao = :descricao, preco = :preco, quant_em_estoque = :quant_em_estoque, cod_de_barra = :cod_de_barra, idfornecedor = :idfornecedor where idProduto = ?";
+            $sql = "UPDATE produto set nome = :nome, descricao = :descricao, preco = :preco, quant_em_estoque = :quant_em_estoque, cod_de_barra = :cod_de_barra, idfornecedor = :idfornecedor, idcategoria = :idcategoria where idproduto = :id";
             $stm = $this->pdo->prepare($sql);
             $stm->bindValue(':nome', $produtoDTO->getNome());
             $stm->bindValue(':descricao', $produtoDTO->getDescricao());
@@ -92,7 +120,9 @@ class ProdutoDAO extends DBConnection
             $stm->bindValue(':quant_em_estoque', $produtoDTO->getQuantEmEstoque());
             $stm->bindValue(':cod_de_barra', $produtoDTO->getCodDeBarra());
             $stm->bindValue(':idfornecedor', $produtoDTO->getIdfornecedor());
-            $stm->execute([$id]);
+            $stm->bindValue(':idcategoria', $produtoDTO->getIdcategoria());
+            $stm->bindValue(':id', $produtoDTO->getIdcategoria());
+            $stm->execute();
         }catch (PDOException $e) {
             echo 'erro ao atualizar: '. $e->getMessage();
         }
