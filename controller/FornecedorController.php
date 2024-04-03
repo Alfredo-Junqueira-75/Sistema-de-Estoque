@@ -73,4 +73,4 @@ if (isset($_POST['cadastrarfornecedor'])) {
     // Restante do código...
 }
 
-?>
+

@@ -5,6 +5,11 @@
 </div>
 
 <!--end-Footer-part-->
+    <!--<script>
+        function confirmar() {
+            return confirm("Tem certeza de que deseja prosseguir?");
+        }
+    </script>-->
 
 <script type="text/javascript" ></script>
 <script src="js/excanvas.min.js"></script>

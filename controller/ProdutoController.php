@@ -14,7 +14,7 @@ class ProdutoController {
         $this->conn = $this->ProdutoDAO->getConn();
     }
 
-    public function cadastrarProduto($nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria) {
+    public function cadastrarProduto($user, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria) {
         $this->ProdutoDTO->setNome($nome);
         $this->ProdutoDTO->setDescricao($descricao);
         $this->ProdutoDTO->setPreco($preco);
@@ -25,14 +25,14 @@ class ProdutoController {
         $this->ProdutoDTO->setIdcategoria($idcategoria);
         
         if ($this->ProdutoDAO->create($this->ProdutoDTO)) {
-            header("Location: ../view/admin/add_new_product.php");
+            header("Location: ../view/".$user."/add_new_product.php");
         } else {
             $errorInfo = $this->conn->errorInfo();
             echo "Error inserting data: " . $errorInfo[2];
         }
     }
 
-    public function editarProduto($id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria) {
+    public function editarProduto($user, $id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria) {
         $this->ProdutoDTO->setIdProduto($id);
         $this->ProdutoDTO->setNome($nome);
         $this->ProdutoDTO->setDescricao($descricao);
@@ -44,7 +44,7 @@ class ProdutoController {
         $this->ProdutoDTO->setIdcategoria($idcategoria);
 
         $this->ProdutoDAO->update($id, $this->ProdutoDTO);
-        header("Location: ../view/admin/add_new_product.php");
+        header("Location: ../view/".$user."/add_new_product.php");
     }
 
     public function getProdutoById($id) {
@@ -79,24 +79,26 @@ class ProdutoController {
 $ProdutoController = new ProdutoController();
 
 if (isset($_POST['cadastrarproduct'])) {
-    $nome = $_POST['nome'];
+    $user = $_POST['user'];
+    $nome = str_replace(' ', '_', $_POST['nome']);
     $descricao = $_POST['descricao'];
     $preco = $_POST['preco'];
     $quant_em_estoque = $_POST['quant_em_estoque'];
     $idfornecedor = $_POST['idfornecedor'];
     $idcategoria = $_POST['idcategoria'];
-    $ProdutoController->cadastrarProduto($nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
-    // Restante do código...
+    $ProdutoController->cadastrarProduto($user, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
+
 } elseif (isset($_POST['submit2'])) {
-    $id = $_POST['id']; // Certifique-se de ter um campo hidden no seu formulário para armazenar o ID.
-    $nome = $_POST['nome'];
+    $user = $_POST['user'];
+    $id = $_POST['id']; 
+    $nome = str_replace(' ', '_', $_POST['nome']);
     $descricao = $_POST['descricao'];
     $preco = $_POST['preco'];
     $quant_em_estoque = $_POST['quant_em_estoque'];
     $idfornecedor = $_POST['idfornecedor'];
     $idcategoria = $_POST['idcategoria'];
-    $ProdutoController->editarProduto($id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
-    // Restante do código...
+    $ProdutoController->editarProduto($user, $id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
+
 }
 
 ?>

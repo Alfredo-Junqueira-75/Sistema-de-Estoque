@@ -51,6 +51,28 @@ class ProdutoDAO extends DBConnection
         
     }
 
+    public function reduceQuant($quant_em_estoque, $nome){
+        try{
+            $sql = "UPDATE produto SET quant_em_estoque = quant_em_estoque - :quant_em_estoque WHERE (nome = :nome)";
+            $stm = $this->pdo->prepare($sql);
+            $stm->bindValue(':nome', $nome);
+            $stm->execute();
+        }catch(PDOException $e){
+            echo "erro ao reduzir quantidade de estoque". $e->getMessage();
+        }
+    }
+
+    public function getPriceByName($nome){
+        try{
+            $sql = "SELECT preco FROM produto WHERE nome = :nome";
+            $stm = $this->pdo->prepare($sql);
+            $stm->bindValue(':nome', $nome);
+            return $stm->execute();
+        }catch(PDOException $e){
+            echo "erro ao pegar o preço pelo nome do banco de dados ". $e->getMessage();
+        }
+    }
+
     public function totalValue(){
         try{
             $sql = "SELECT SUM(preco) FROM `produto` WHERE 1";

@@ -37,9 +37,9 @@
             <ul class="dropdown-menu">
                 <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
                 <li class="divider"></li>
-                <li><a href="#"><i class="icon-check"></i> My Tasks</a></li>
+                <li><a href="../user/index.php"><i class="icon-key"></i> User account</a></li>
                 <li class="divider"></li>
-                <li><a href="index.php"><i class="icon-key"></i> Log Out</a></li>
+                <li><a href="index.php"><i class="icon-signout"></i> Log Out</a></li>
             </ul>
         </li>
 
@@ -51,7 +51,7 @@
 <div id="sidebar">
     <ul>
         <li>
-            <a href="demo.php"><i class="icon icon-home"></i><span>Dashboard</span></a>
+            <a href="demo.php"><i class="icon icon-dashboard"></i><span>Dashboard</span></a>
         </li>
 
         <li>
@@ -63,7 +63,7 @@
         </li>
 
         <li>
-            <a href="add_new_product.php"><i class="icon icon-user"></i><span>Add new product</span></a>
+            <a href="add_new_product.php"><i class="icon icon-food"></i><span>Add new product</span></a>
         </li>
 
         <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Forms</span> <span

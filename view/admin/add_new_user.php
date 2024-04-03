@@ -58,7 +58,6 @@ $usuarioDTO = new UsuarioDTO();
             <thead>
                 <tr>
                     <th>Username</th>
-                    <th>Password</th>
                     <th>Role</th>
                     <th>Status</th>
                     <th>Edit</th>
@@ -70,7 +69,6 @@ $usuarioDTO = new UsuarioDTO();
                 <?php foreach ($usuarioDAO->getAllUsuarios() as $row): ?>
                     <tr>
                         <td><?php echo $row["username"]; ?></td>
-                        <td><?php echo $row["password"]; ?></td>
                         <td><?php echo $row["role"]; ?></td>
                         <td><?php echo $row["status"]; ?></td>
                         <td><a href="edit_user.php?id=<?php echo $row["idusuario"]; ?>">Edit</a></td>

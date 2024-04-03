@@ -35,6 +35,11 @@ $CategoriaDTO = new CategoriaDTO();
         <div class="widget-content nopadding">
             <form name="form1" action="../../controller/ProdutoController.php" method="post" class="form-horizontal">
             <div class="control-group">
+                    <div class="controls">
+                        <input type="hidden" name="user" value="admin">
+                    </div>
+            </div>
+            <div class="control-group">
                 <label class="control-label">name:</label>
                 <div class="controls">
                 <input type="text" class="span11" placeholder="name" name="nome" />

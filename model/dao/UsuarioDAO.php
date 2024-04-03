@@ -18,13 +18,13 @@ class UsuarioDAO extends DBConnection{
     public function create(UsuarioDTO $usuarioDTO)
     {
         try{
-            $hashPassword = password_hash($usuarioDTO->getPassword(), PASSWORD_DEFAULT);
             $stm = $this->pdo->prepare("INSERT INTO usuario( idusuario, username, password, role, status) VALUES (uuid(),:username, :password, :role, :status)");
-            $username = $usuarioDTO->getUsername();           
+            $username = $usuarioDTO->getUsername(); 
+            $password = $usuarioDTO->getPassword();           
             $role = $usuarioDTO->getRole();
             $status = $usuarioDTO->getStatus();
             $stm->bindParam(':username', $username);
-            $stm->bindParam(':password', $hashPassword);
+            $stm->bindParam(':password', $password);
             $stm->bindParam(':role', $role);
             $stm->bindParam(':status', $status);
             $stm->execute();
