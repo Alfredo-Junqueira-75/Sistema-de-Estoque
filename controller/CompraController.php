@@ -41,8 +41,6 @@ class CompraController{
 
     }
 
-}
-
     public function handleRequest(){
         if(isset($_POST['finalizarComprar'])){
 
