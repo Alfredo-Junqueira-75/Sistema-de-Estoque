@@ -24,11 +24,21 @@ class ProdutoController {
         $this->ProdutoDTO->setIdfornecedor($idfornecedor);
         $this->ProdutoDTO->setIdcategoria($idcategoria);
         
-        if ($this->ProdutoDAO->create($this->ProdutoDTO)) {
-            header("Location: ../view/".$user."/add_new_product.php");
+        $creationResult = $this->ProdutoDAO->create($this->ProdutoDTO);
+        error_log("Creation result for product " . $nome . ": " . ($creationResult ? "Success" : "Failure"));
+
+        if ($creationResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/".$user."/add_new_product.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in cadastrarProduto.");
+                echo "<div class=\"alert alert-success\">Product created successfully, but redirection failed.</div>";
+            }
         } else {
             $errorInfo = $this->conn->errorInfo();
-            echo "Error inserting data: " . $errorInfo[2];
+            error_log("Error inserting data for product " . $nome . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error inserting product.</div>";
         }
     }
 
@@ -43,8 +53,22 @@ class ProdutoController {
         $this->ProdutoDTO->setIdfornecedor($idfornecedor);
         $this->ProdutoDTO->setIdcategoria($idcategoria);
 
-        $this->ProdutoDAO->update($id, $this->ProdutoDTO);
-        header("Location: ../view/".$user."/add_new_product.php");
+        $updateResult = $this->ProdutoDAO->update($id, $this->ProdutoDTO);
+        error_log("Update result for product ID " . $id . ": " . ($updateResult ? "Success" : "Failure"));
+
+        if ($updateResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/" . $user . "/add_new_product.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in editarProduto.");
+                echo "<div class=\"alert alert-success\">Product updated successfully, but redirection failed.</div>";
+            }
+        } else {
+            $errorInfo = $this->conn->errorInfo();
+            error_log("Error updating data for product ID " . $id . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error updating product.</div>";
+        }
     }
 
     public function getProdutoById($id) {
@@ -65,8 +89,16 @@ class ProdutoController {
     } 
 
     public function excluirProduto($id) {
-        $this->ProdutoDAO->delete($id);
-        echo "Supplier deleted successfully.";
+        $deleteResult = $this->ProdutoDAO->delete($id);
+        error_log("Delete result for product ID " . $id . ": " . ($deleteResult ? "Success" : "Failure"));
+
+        if ($deleteResult) {
+            echo "<div class=\"alert alert-success\">Product deleted successfully.</div>";
+        } else {
+            $errorInfo = $this->conn->errorInfo();
+            error_log("Error deleting product ID " . $id . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error deleting product.</div>";
+        }
     }
 
     public function getAllProdutoes() {
@@ -74,31 +106,31 @@ class ProdutoController {
         $Produtoes = $this->ProdutoDAO->All();
         return $Produtoes;
     }
+    public function handleRequest() {
+        if (isset($_POST['cadastrarproduct'])) {
+            $user = $_POST['user'];
+            $nome = str_replace(' ', '_', $_POST['nome']);
+            $descricao = $_POST['descricao'];
+            $preco = $_POST['preco'];
+            $quant_em_estoque = $_POST['quant_em_estoque'];
+            $idfornecedor = $_POST['idfornecedor'];
+            $idcategoria = $_POST['idcategoria'];
+            $this->cadastrarProduto($user, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
+        } elseif (isset($_POST['submit2'])) {
+            $user = $_POST['user'];
+            $id = $_POST['id']; 
+            $nome = str_replace(' ', '_', $_POST['nome']);
+            $descricao = $_POST['descricao'];
+            $preco = $_POST['preco'];
+            $quant_em_estoque = $_POST['quant_em_estoque'];
+            $idfornecedor = $_POST['idfornecedor'];
+            $idcategoria = $_POST['idcategoria'];
+            $this->editarProduto($user, $id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
+        }
+    }
 }
 
 $ProdutoController = new ProdutoController();
-
-if (isset($_POST['cadastrarproduct'])) {
-    $user = $_POST['user'];
-    $nome = str_replace(' ', '_', $_POST['nome']);
-    $descricao = $_POST['descricao'];
-    $preco = $_POST['preco'];
-    $quant_em_estoque = $_POST['quant_em_estoque'];
-    $idfornecedor = $_POST['idfornecedor'];
-    $idcategoria = $_POST['idcategoria'];
-    $ProdutoController->cadastrarProduto($user, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
-
-} elseif (isset($_POST['submit2'])) {
-    $user = $_POST['user'];
-    $id = $_POST['id']; 
-    $nome = str_replace(' ', '_', $_POST['nome']);
-    $descricao = $_POST['descricao'];
-    $preco = $_POST['preco'];
-    $quant_em_estoque = $_POST['quant_em_estoque'];
-    $idfornecedor = $_POST['idfornecedor'];
-    $idcategoria = $_POST['idcategoria'];
-    $ProdutoController->editarProduto($user, $id, $nome, $descricao, $preco, $quant_em_estoque, $idfornecedor, $idcategoria);
-
-}
+$ProdutoController->handleRequest();
 
 ?>

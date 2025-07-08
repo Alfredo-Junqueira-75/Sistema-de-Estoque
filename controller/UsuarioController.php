@@ -63,40 +63,54 @@ class UsuarioController {
         $this->usuarioDTO->setRole($role);
         $this->usuarioDTO->setStatus($status);
 
-        $this->usuarioDAO->updateUsuario($this->usuarioDTO);
-        header("Location: ../view/admin/add_new_user.php");
+        $updateResult = $this->usuarioDAO->updateUsuario($this->usuarioDTO);
+        error_log("Update result for user ID " . $id . ": " . ($updateResult ? "Success" : "Failure"));
+
+        if ($updateResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/admin/add_new_user.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in editarUsuario.");
+                echo "<div class=\"alert alert-success\">User updated successfully, but redirection failed.</div>";
+            }
+        } else {
+            $errorInfo = $this->conn->errorInfo();
+            error_log("Error updating data for user ID " . $id . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error updating user.</div>";
+        }
     }
 
     public function getUsuarioById($id) {
-        // Aqui você pode implementar a lógica para obter os dados do usuário pelo ID
         $usuario = $this->usuarioDAO->getUsuarioById($id);
         return $usuario;
+    }
+
+    public function handleRequest() {
+        if (isset($_POST['submit1'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $this->validarLogin($username, $password, 'user');
+        } elseif (isset($_POST['submit2'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $this->validarLogin($username, $password, 'admin');
+        } elseif (isset($_POST['submit3'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $role = $_POST['role'];
+            $this->cadastrarUsuario($username, $password, $role);
+        } elseif (isset($_POST['submit4'])) {
+            $id = $_POST['id'];
+            $password = $_POST['password'];
+            $role = $_POST['role'];
+            $status = $_POST['status'];
+            $this->editarUsuario($id, $password, $role, $status);
+        }
     }
 }
 
 $usuarioController = new UsuarioController();
-
-if (isset($_POST['submit1'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $usuarioController->validarLogin($username, $password, 'user');
-} elseif (isset($_POST['submit2'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $usuarioController->validarLogin($username, $password, 'admin');
-} elseif (isset($_POST['submit3'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $role = $_POST['role'];
-    $usuarioController->cadastrarUsuario($username, $password, $role);
-    // Restante do código...
-} elseif (isset($_POST['submit4'])) {
-    $id = $_POST['id']; // Certifique-se de ter um campo hidden no seu formulário para armazenar o ID.
-    $password = $_POST['password'];
-    $role = $_POST['role'];
-    $status = $_POST['status'];
-    $usuarioController->editarUsuario($id, $password, $role, $status);
-    // Restante do código...
-}
+$usuarioController->handleRequest();
 
 ?>

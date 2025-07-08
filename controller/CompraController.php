@@ -22,41 +22,56 @@ class CompraController{
         $this->compraDTO->setIdUsuario(600);
         $this->compraDTO->setPrecoTotal($totalPrice);
 
-        if ($this->compraDAO->purchase($this->compraDTO)) {
-            header("Location: ../view/user/make_purchase.php");
+        $purchaseResult = $this->compraDAO->purchase($this->compraDTO);
+        error_log("Purchase result for client " . $cliente . ": " . ($purchaseResult ? "Success" : "Failure"));
+
+        if ($purchaseResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/user/make_purchase.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in realizarCompra.");
+                echo "<div class=\"alert alert-success\">Purchase completed successfully, but redirection failed.</div>";
+            }
         } else {
             $errorInfo = $this->conn->errorInfo();
-            echo "Error inserting data: " . $errorInfo[2];
+            error_log("Error inserting data for purchase by " . $cliente . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error completing purchase.</div>";
         }
 
+    }
+
+}
+
+    public function handleRequest(){
+        if(isset($_POST['finalizarComprar'])){
+
+            $cliente = $_POST['cliente'];
+            $produtos = "";
+            $totalPrice = 0;
+
+            include_once( __DIR__ ."/../model/dao/ProdutoDAO.php");
+            $ProdutoDAO = new ProdutoDAO();
+
+            foreach ($ProdutoDAO->All() as $row) {
+                $nomeInput = $row["nome"];
+
+                if (isset($_POST[$nomeInput])) {
+                    $valorInput = $_POST[$nomeInput];
+                    if($valorInput != 0){
+                        $ProdutoDAO->reduceQuant($valorInput, $nomeInput);
+                        $produtos .= $nomeInput. "(". $valorInput. ")". "; ";
+                        $totalPrice += $ProdutoDAO->getPriceByName($nomeInput);
+                    }
+                }
+            }
+
+            $this->realizarCompra($cliente, $produtos, $totalPrice);
+
+        }
     }
 
 }
 
 $compraController = new CompraController();
-
-if(isset($_POST['finalizarComprar'])){
-
-    $cliente = $_POST['cliente'];
-    $produtos = "";
-    $totalPrice = 0;
-
-    include_once( __DIR__ ."/../model/dao/ProdutoDAO.php");
-    $ProdutoDAO = new ProdutoDAO();
-
-    foreach ($ProdutoDAO->All() as $row) {
-        $nomeInput = $row["nome"];
-
-        if (isset($_POST[$nomeInput])) {
-            $valorInput = $_POST[$nomeInput];
-            if($valorInput != 0){
-                $ProdutoDAO->reduceQuant($valorInput, $nomeInput);
-                $produtos .= $nomeInput. "(". $valorInput. ")". "; ";
-                $totalPrice += $ProdutoDAO->getPriceByName($nomeInput);
-            }
-        }
-    }
-
-    $compraController->realizarCompra($cliente, $produtos, $totalPrice);
-
-}
+$compraController->handleRequest();

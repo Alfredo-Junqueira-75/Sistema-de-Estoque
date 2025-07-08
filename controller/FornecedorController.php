@@ -19,11 +19,21 @@ class FornecedorController {
         $this->fornecedorDTO->setEmail($email);
         $this->fornecedorDTO->setTelefone($telefone);
 
-        if ($this->fornecedorDAO->create($this->fornecedorDTO)) {
-            header("Location: ../view/admin/add_new_supplier.php");
+        $creationResult = $this->fornecedorDAO->create($this->fornecedorDTO);
+        error_log("Creation result for supplier " . $nome . ": " . ($creationResult ? "Success" : "Failure"));
+
+        if ($creationResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/admin/add_new_supplier.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in cadastrarFornecedor.");
+                echo "<div class=\"alert alert-success\">Supplier created successfully, but redirection failed.</div>";
+            }
         } else {
             $errorInfo = $this->conn->errorInfo();
-            echo "Error inserting data: " . $errorInfo[2];
+            error_log("Error inserting data for supplier " . $nome . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error inserting supplier.</div>";
         }
     }
 
@@ -34,8 +44,22 @@ class FornecedorController {
         $fornecedor->setEmail($email);
         $fornecedor->setTelefone($telefone);
 
-        $this->fornecedorDAO->update($id, $fornecedor);
-        header("Location: ../view/admin/add_new_supplier.php");
+        $updateResult = $this->fornecedorDAO->update($id, $fornecedor);
+        error_log("Update result for supplier ID " . $id . ": " . ($updateResult ? "Success" : "Failure"));
+
+        if ($updateResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/admin/add_new_supplier.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in editarFornecedor.");
+                echo "<div class=\"alert alert-success\">Supplier updated successfully, but redirection failed.</div>";
+            }
+        } else {
+            $errorInfo = $this->conn->errorInfo();
+            error_log("Error updating data for supplier ID " . $id . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error updating supplier.</div>";
+        }
     }
 
     public function getFornecedorById($id) {
@@ -45,8 +69,16 @@ class FornecedorController {
     }
 
     public function excluirFornecedor($id) {
-        $this->fornecedorDAO->delete($id);
-        echo "Supplier deleted successfully.";
+        $deleteResult = $this->fornecedorDAO->delete($id);
+        error_log("Delete result for supplier ID " . $id . ": " . ($deleteResult ? "Success" : "Failure"));
+
+        if ($deleteResult) {
+            echo "<div class=\"alert alert-success\">Supplier deleted successfully.</div>";
+        } else {
+            $errorInfo = $this->conn->errorInfo();
+            error_log("Error deleting supplier ID " . $id . ": " . $errorInfo[2]);
+            echo "<div class=\"alert alert-danger\">Error deleting supplier.</div>";
+        }
     }
 
     public function getAllFornecedores() {
@@ -54,23 +86,25 @@ class FornecedorController {
         $fornecedores = $this->fornecedorDAO->getAll();
         return $fornecedores;
     }
+public function handleRequest() {
+        if (isset($_POST['cadastrarfornecedor'])) {
+            $nome = $_POST['nome'];
+            $email = $_POST['email'];
+            $telefone = $_POST['telefone'];
+            $this->cadastrarFornecedor($nome, $email, $telefone);
+        } elseif (isset($_POST['submit'])) {
+            $id = $_POST['id']; 
+            $nome = $_POST['nome'];
+            $email = $_POST['email'];
+            $telefone = $_POST['telefone'];
+            $this->editarFornecedor($id, $nome, $email, $telefone);
+        }
+    }
 }
 
 $fornecedorController = new FornecedorController();
+$fornecedorController->handleRequest();
 
-if (isset($_POST['cadastrarfornecedor'])) {
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-    $telefone = $_POST['telefone'];
-    $fornecedorController->cadastrarFornecedor($nome, $email, $telefone);
-    // Restante do código...
-} elseif (isset($_POST['submit'])) {
-    $id = $_POST['id']; 
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-    $telefone = $_POST['telefone'];
-    $fornecedorController->editarFornecedor($id, $nome, $email, $telefone);
-    // Restante do código...
-}
+?>
 
 
