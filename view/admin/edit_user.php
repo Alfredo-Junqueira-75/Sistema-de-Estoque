@@ -1,5 +1,5 @@
 <?php
-include "header.php";
+include __DIR__ . '/../includes/header.php';
 include_once "../../model/conect/DBConnection.php";
 include_once "../../controller/UsuarioController.php";
 
@@ -83,5 +83,5 @@ $usuario = $usuarioController->getUsuarioById($id);
     </div>
 
 <?php
-include "footer.php";
+include __DIR__ . '/../includes/footer.php';;
 ?>

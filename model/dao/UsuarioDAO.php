@@ -20,35 +20,36 @@ class UsuarioDAO extends DBConnection{
         try{
             $stm = $this->pdo->prepare("INSERT INTO usuario( idusuario, username, password, role, status) VALUES (uuid(),:username, :password, :role, :status)");
             $username = $usuarioDTO->getUsername(); 
-            $password = $usuarioDTO->getPassword();           
+            $password = password_hash($usuarioDTO->getPassword(), PASSWORD_DEFAULT);           
             $role = $usuarioDTO->getRole();
             $status = $usuarioDTO->getStatus();
             $stm->bindParam(':username', $username);
             $stm->bindParam(':password', $password);
             $stm->bindParam(':role', $role);
             $stm->bindParam(':status', $status);
-            $stm->execute();
+            return $stm->execute();
         }catch(PDOException $e){
-            echo "Error inserting data: " . $e->getMessage();
+            error_log("Error inserting data: " . $e->getMessage());
+            return false;
         }
     }
 
-    public function validarUsuario($username, $password) {
-        $stm = $this->pdo->prepare("SELECT * FROM usuario WHERE username = :username AND password = :password AND role = 'user' AND status = 'active'");
+    public function validarLogin($username, $password, $role) {
+        error_log("DAO: Validating login for username: " . $username . ", role: " . $role);
+        $stm = $this->pdo->prepare("SELECT password FROM usuario WHERE username = :username AND role = :role AND status = 'active'");
         $stm->bindParam(':username', $username);
-        $stm->bindParam(':password', $password);
+        $stm->bindParam(':role', $role);
         $stm->execute();
+        $hashedPassword = $stm->fetchColumn();
 
-        return $stm->rowCount();
-    }
+        error_log("DAO: Fetched hashed password: " . ($hashedPassword ? "(exists)" : "(null)"));
+        error_log("DAO: Password verify result: " . (password_verify($password, $hashedPassword) ? "true" : "false"));
 
-    public function validarAdmin($username, $password) {
-        $stm = $this->pdo->prepare("SELECT * FROM usuario WHERE username = :username AND password = :password AND role = 'admin' AND status = 'active'");
-        $stm->bindParam(':username', $username);
-        $stm->bindParam(':password', $password);
-        $stm->execute();
-
-        return $stm->rowCount();
+        if ($hashedPassword && password_verify($password, $hashedPassword)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function getAllUsuarios() {
@@ -61,7 +62,7 @@ class UsuarioDAO extends DBConnection{
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Erro na busca de usuários: " . $e->getMessage();
+            error_log("Erro na busca de usuários: " . $e->getMessage());
             return array();
         }
     }
@@ -77,7 +78,7 @@ class UsuarioDAO extends DBConnection{
                 $array = $stmt->fetchObject('UsuarioDTO');
                 return $array;
             } catch (PDOException $e) {
-                echo "Erro na busca do usuário por ID: " . $e->getMessage();
+                error_log("Erro na busca do usuário por ID: " . $e->getMessage());
                 return null;
             }
         }
@@ -91,7 +92,7 @@ class UsuarioDAO extends DBConnection{
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
             } catch (PDOException $e) {
-                echo "Erro na exclusão do usuário: " . $e->getMessage();
+                error_log("Erro na exclusão do usuário: " . $e->getMessage());
             }
         }
 
@@ -113,7 +114,7 @@ class UsuarioDAO extends DBConnection{
     
                 return $stmt->execute();
             } catch (PDOException $e) {
-                echo "Erro na atualização do usuário: " . $e->getMessage();
+                error_log("Erro na atualização do usuário: " . $e->getMessage());
                 return false;
             }
         }

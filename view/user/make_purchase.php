@@ -1,5 +1,5 @@
 <?php
-include "header.php";
+include __DIR__ . '/../includes/header.php';
 include_once("../../model/conect/DBConnection.php");
 include_once("../../model/dto/CompraDTO.php");
 include_once("../../model/dao/CompraDAO.php");
@@ -103,5 +103,5 @@ $CompraDTO = new CompraDTO();
 
 
 <?php
-include "footer.php"
+include __DIR__ . '/../includes/footer.php';
 ?>

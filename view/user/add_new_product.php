@@ -1,5 +1,5 @@
 <?php
-include "header.php";
+include __DIR__ . '/../includes/header.php';
 include_once("../../model/conect/DBConnection.php");
 include_once("../../model/dto/ProdutoDTO.php");
 include_once("../../model/dao/ProdutoDAO.php");
@@ -179,5 +179,5 @@ $CategoriaDTO = new CategoriaDTO();
 
 
 <?php
-include "footer.php"
+include __DIR__ . '/../includes/footer.php';
 ?>

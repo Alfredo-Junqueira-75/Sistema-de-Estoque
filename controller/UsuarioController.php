@@ -15,23 +15,22 @@ class UsuarioController {
         $this->conn = $this->usuarioDAO->getConn();
     }
 
-    public function validarUsuario($username, $password) {
-        $count = $this->usuarioDAO->validarUsuario($username, $password);
-        if ($count > 0) {
-            header("Location: ../view/user/demo.php");
+    public function validarLogin($username, $password, $role) {
+        error_log("Attempting login for username: " . $username . ", role: " . $role);
+        if ($this->usuarioDAO->validarLogin($username, $password, $role)) {
+            error_log("Login successful for username: " . $username);
+            session_start();
+            $_SESSION["username"] = $username;
+            $_SESSION["role"] = $role;
+            if ($role == 'admin') {
+                header("Location: ../view/admin/demo.php");
+            } else {
+                header("Location: ../view/user/demo.php");
+            }
             exit;
         } else {
+            error_log("Login failed for username: " . $username . ", role: " . $role);
             echo '<div class="alert alert-danger">Invalid Username or Password, or account blocked by admin.</div>';
-        }
-    }
-
-    public function validarAdmin($username, $password) {
-        $count = $this->usuarioDAO->validarAdmin($username, $password);
-        if ($count > 0) {
-            header("Location: ../view/admin/demo.php");
-            exit;
-        } else {
-            echo '<div class="alert alert-danger">Invalid Username or Password.</div>';
         }
     }
 
@@ -41,11 +40,20 @@ class UsuarioController {
         $this->usuarioDTO->setRole($role);
         $this->usuarioDTO->setStatus("active");
 
-        if ($this->usuarioDAO->create($this->usuarioDTO)) {
-            header("Location: ../view/admin/add_new_user.php");
+        $creationResult = $this->usuarioDAO->create($this->usuarioDTO);
+        error_log("Creation result for user " . $username . ": " . ($creationResult ? "Success" : "Failure"));
+
+        if ($creationResult) {
+            if (!headers_sent()) {
+                header("Location: ../view/admin/add_new_user.php");
+                exit;
+            } else {
+                error_log("Headers already sent before redirection in cadastrarUsuario.");
+                echo "<div class=\"alert alert-success\">User created successfully, but redirection failed.</div>";
+            }
         } else {
             $errorInfo = $this->conn->errorInfo();
-            echo "Error inserting data: " . $errorInfo[2];
+            error_log("Error inserting data for user " . $username . ": " . $errorInfo[2]);
         }
     }
 
@@ -71,13 +79,11 @@ $usuarioController = new UsuarioController();
 if (isset($_POST['submit1'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $usuarioController->validarUsuario($username, $password);
-    // Restante do código...
+    $usuarioController->validarLogin($username, $password, 'user');
 } elseif (isset($_POST['submit2'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $usuarioController->validarAdmin($username, $password);
-    // Restante do código...
+    $usuarioController->validarLogin($username, $password, 'admin');
 } elseif (isset($_POST['submit3'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];

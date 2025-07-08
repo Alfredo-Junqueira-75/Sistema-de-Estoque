@@ -21,10 +21,12 @@ class CategoriaDAO extends DBConnection
             if ($stm->execute()) {
                 return $stm->fetchAll(PDO::FETCH_ASSOC);
             } else {
-                echo "Erro ao executar a consulta: " . $stm->errorInfo()[2];
+                error_log("Erro ao executar a consulta: " . $stm->errorInfo()[2]);
+                return [];
             }
         }catch(PDOException $e) {
-            echo "erro ao listar categorias". $e->getMessage();
+            error_log("erro ao listar categorias". $e->getMessage());
+            return [];
         }
         
     }

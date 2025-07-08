@@ -77,6 +77,6 @@ if ($fornecedor) {
 
 
     <?php
-include "footer.php"
+include __DIR__ . '/../includes/footer.php';
 ?>
 

@@ -29,7 +29,8 @@
 
             return $stm->execute();
         }catch( PDOException $e){
-            echo "Erro na inserção de dados: " . $e->getMessage();
+            error_log("Erro na inserção de dados da compra: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -40,10 +41,12 @@
             if ($stm->execute()) {
                 return $stm->fetchAll(PDO::FETCH_ASSOC);
             } else {
-                echo "Erro ao executar a consulta: " . $stm->errorInfo()[2];
+                error_log("Erro ao executar a consulta: " . $stm->errorInfo()[2]);
+                return [];
             }
         }catch(PDOException $e) {
-            echo "erro ao listar compras". $e->getMessage();
+            error_log("erro ao listar compras". $e->getMessage());
+            return [];
         }
         
     }
@@ -60,7 +63,8 @@
             return $compraDTO;
 
         } catch (PDOException $e) {
-            echo "Erro na leitura de dados: " . $e->getMessage();
+            error_log("Erro na leitura de dados da compra: " . $e->getMessage());
+            return null;
         }
     }
 
@@ -72,7 +76,7 @@
             
             $stm->execute();
         }catch( PDOException $e){
-            echo "Erro na inserção de dados: " . $e->getMessage();
+            error_log("Erro na deleção de dados da compra: " . $e->getMessage());
         }
     }
 

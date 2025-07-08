@@ -1,10 +1,10 @@
 <?php
-include "header.php";
-include_once("../../model/conect/DBConnection.php");
-include_once("../../model/dto/ProdutoDTO.php");
-include_once("../../model/dao/ProdutoDAO.php");
-include_once("../../model/dto/CategoriaDTO.php");
-include_once("../../model/dao/CategoriaDAO.php");
+include __DIR__ . '/../includes/header.php';
+include_once(__DIR__ . "/../../model/conect/DBConnection.php");
+include_once(__DIR__ . "/../../model/dto/ProdutoDTO.php");
+include_once(__DIR__ . "/../../model/dao/ProdutoDAO.php");
+include_once(__DIR__ . "/../../model/dto/CategoriaDTO.php");
+include_once(__DIR__ . "/../../model/dao/CategoriaDAO.php");
 include_once(__DIR__ . "/../../controller/ProdutoController.php");
 
 $produto = new ProdutoController();
@@ -178,5 +178,5 @@ $CategoriaDTO = new CategoriaDTO();
 
 
 <?php
-include "footer.php"
+include __DIR__ . '/../includes/footer.php';
 ?>

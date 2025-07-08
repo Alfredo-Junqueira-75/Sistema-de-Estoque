@@ -113,6 +113,6 @@ if ($produto) {
 
 
     <?php
-include "footer.php"
+include __DIR__ . '/../includes/footer.php';
 ?>
 

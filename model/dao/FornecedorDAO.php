@@ -26,7 +26,8 @@ class FornecedorDAO extends DBConnection {
             return $stm->execute();
 
         } catch (PDOException $e) {
-            echo "Erro na inserção de dados: " . $e->getMessage();
+            error_log("Erro na inserção de dados do fornecedor: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -42,7 +43,8 @@ class FornecedorDAO extends DBConnection {
             return $fornecedorDTO;
 
         } catch (PDOException $e) {
-            echo "Erro na leitura de dados: " . $e->getMessage();
+            error_log("Erro na leitura de dados do fornecedor: " . $e->getMessage());
+            return null;
         }
     }
 
@@ -58,7 +60,8 @@ class FornecedorDAO extends DBConnection {
             return $stm->execute();
 
         } catch (PDOException $e) {
-            echo "Erro na atualização de dados: " . $e->getMessage();
+            error_log("Erro na atualização de dados do fornecedor: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -71,7 +74,8 @@ class FornecedorDAO extends DBConnection {
             return $stm->execute();
 
         } catch (PDOException $e) {
-            echo "Erro na exclusão de dados: " . $e->getMessage();
+            error_log("Erro na exclusão de dados do fornecedor: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -83,7 +87,8 @@ class FornecedorDAO extends DBConnection {
             return $stm->fetchAll(PDO::FETCH_ASSOC);
 
         } catch (PDOException $e) {
-            echo "Erro ao obter todos os dados: " . $e->getMessage();
+            error_log("Erro ao obter todos os dados do fornecedor: " . $e->getMessage());
+            return [];
         }
     }
 }

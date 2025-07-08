@@ -32,7 +32,8 @@ class ProdutoDAO extends DBConnection
             return $stm->execute();
             
         } catch (PDOException $e) {
-            echo "Erro na inserção de dados: " . $e->getMessage();
+            error_log("Erro na inserção de dados: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -43,10 +44,12 @@ class ProdutoDAO extends DBConnection
             if ($stm->execute()) {
                 return $stm->fetchAll(PDO::FETCH_ASSOC);
             } else {
-                echo "Erro ao executar a consulta: " . $stm->errorInfo()[2];
+                error_log("Erro ao executar a consulta: " . $stm->errorInfo()[2]);
+                return [];
             }
         }catch(PDOException $e) {
-            echo "erro ao listar produtos". $e->getMessage();
+            error_log("erro ao listar produtos". $e->getMessage());
+            return [];
         }
         
     }
@@ -58,7 +61,7 @@ class ProdutoDAO extends DBConnection
             $stm->bindValue(':nome', $nome);
             $stm->execute();
         }catch(PDOException $e){
-            echo "erro ao reduzir quantidade de estoque". $e->getMessage();
+            error_log("erro ao reduzir quantidade de estoque". $e->getMessage());
         }
     }
 
@@ -69,7 +72,8 @@ class ProdutoDAO extends DBConnection
             $stm->bindValue(':nome', $nome);
             return $stm->execute();
         }catch(PDOException $e){
-            echo "erro ao pegar o preço pelo nome do banco de dados ". $e->getMessage();
+            error_log("erro ao pegar o preço pelo nome do banco de dados ". $e->getMessage());
+            return false;
         }
     }
 
@@ -80,7 +84,8 @@ class ProdutoDAO extends DBConnection
             $stm->execute();
             return $stm->fetchColumn();
         }catch(PDOException $e){
-            echo "Erro na contagem do valor total : " . $e->getMessage();
+            error_log("Erro na contagem do valor total : " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -91,7 +96,8 @@ class ProdutoDAO extends DBConnection
             $stm->execute();
             return $stm->fetchColumn();
         }catch(PDOException $e){
-            echo "Erro na contagem de produto : " . $e->getMessage();
+            error_log("Erro na contagem total de produtos : " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -103,7 +109,8 @@ class ProdutoDAO extends DBConnection
             $stm->execute();
             return $stm->fetchColumn();
         }catch(PDOException $e){
-            echo "Erro na contagem de produto : " . $e->getMessage();
+            error_log("Erro na contagem de subtotal de produto : " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -113,7 +120,7 @@ class ProdutoDAO extends DBConnection
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id]);
         } catch (PDOException $e) {
-            echo "Erro na deleção de dados: " . $e->getMessage();
+            error_log("Erro na deleção de dados: " . $e->getMessage());
         }
     }
 
@@ -126,7 +133,8 @@ class ProdutoDAO extends DBConnection
             $produtoDTO = $stm->fetchObject('ProdutoDTO');
             return $produtoDTO;
         } catch (PDOException $e) {
-            echo "Erro para encontrar o produto: " . $e->getMessage();
+            error_log("Erro para encontrar o produto: " . $e->getMessage());
+            return null;
         }
     }
     
@@ -146,7 +154,7 @@ class ProdutoDAO extends DBConnection
             $stm->bindValue(':id', $produtoDTO->getIdcategoria());
             $stm->execute();
         }catch (PDOException $e) {
-            echo 'erro ao atualizar: '. $e->getMessage();
+            error_log('erro ao atualizar: '. $e->getMessage());
         }
     }
     
